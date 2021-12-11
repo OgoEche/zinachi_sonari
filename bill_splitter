@@ -1,0 +1,42 @@
+def dinner_planner2():
+    name_2_fund = {}
+    print('Enter the number of friends joining (including you): ')
+    number = int(input())
+    
+    if number < 1:
+        print('No one is joining for the party')
+        return
+    
+    print('Enter the name of friends joining (including you): ')
+    for _ in range(number):
+        name = input()
+        name_2_fund.setdefault(name, 0)
+               
+    print('Enter the total bill value: ')
+    bill = float(input())
+    split_bill = round(bill/number, ndigits=2)
+    for key in name_2_fund:
+        name_2_fund[key] = split_bill
+    
+    
+    print('Do you want to use the "Who is lucky" feature? ')
+    lucky = input().lower()
+    if lucky == 'yes':
+        lucky_one = random.choice(list(name_2_fund.keys()))
+        print(f'{lucky_one} is the lucky one!')
+        
+        split_bill = round(bill / (number -1), ndigits=2)
+        for key in name_2_fund:
+            if key == lucky_one:
+                name_2_fund[key] = 0
+                continue
+            name_2_fund[key] = split_bill
+
+        print(name_2_fund)
+    else:
+        print('No one is going to be lucky')
+        print(name_2_fund)
+        
+    
+        
+       

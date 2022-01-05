@@ -1,0 +1,76 @@
+import random
+
+
+def rock_paper_scissors():
+    default_opts = 'rock,paper,scissors'.split(',')
+    # Generated options map for default options above will look like below:
+    """
+        {'rock'   : [('paper',), ('scissors',)],
+        'paper'   : [('scissors',), ('rock',)],
+        'scissors': [('rock',), ('paper',)]}
+    """
+    # mapping = {'rock': 'paper', 'paper': 'scissors', 'scissors': 'rock'}
+    lose_msg = 'Sorry, but the computer chose'
+    draw_msg = 'There is a draw'
+    win_msg = 'Well done. The computer chose'
+    user_rating = 0
+
+    # Note that options at index 0 of dict list value will beat the dict key
+    # while options at index 1 of dict list value will be defected by dict key
+    def generate_options_map(options_list):
+        options_map = {}
+        for i, v in enumerate(options_list):
+            before_chosen_opt = options_list[:i]
+            after_chosen_opt = options_list[i+1:]
+            merge_opt = after_chosen_opt + before_chosen_opt
+            first_half = merge_opt[:(len(merge_opt)+1) // 2]
+            second_half = merge_opt[(len(merge_opt)+1) // 2:]
+            options_map[v] = [tuple(first_half), tuple(second_half)]
+        return options_map
+
+    print('Enter your name: ', end='> ')
+    name = input()
+    print(f'Hello, {name}')
+
+    with open('rating.txt', 'r') as file:
+        for entry in file:
+            item = entry.split()
+            if item[0] == name:
+                user_rating = int(item[-1])
+
+    user_opts = input('> ')
+    if user_opts:
+        options_mapping = generate_options_map(user_opts.split(','))
+    else:
+        options_mapping = generate_options_map(default_opts)
+
+    print("Okay, let's start")
+
+    while (response := input('> ').lower()) != '!exit':
+
+        if response == '!rating':
+            print(f'Your rating: {user_rating}')
+            continue
+
+        if response not in options_mapping.keys() and response != '!rating':
+            print('Invalid input')
+            continue
+
+        comp = random.choice(list(options_mapping.keys()))
+
+        if response == comp:
+            print(f'{draw_msg} ({response}) response -> {response} == {comp} <- comp')
+            user_rating += 50
+        elif comp in options_mapping[response][1]:
+            print(f'{win_msg} {comp} and failed')
+            user_rating += 100
+        elif comp in options_mapping[response][0]:
+            print(f'{lose_msg} {comp}')
+        else:
+            print(f'No winner or draw with: response -> {response} <> {comp} <- comp')
+    else:
+        print('Bye!')
+
+
+if __name__ == '__main__':
+    rock_paper_scissors()
